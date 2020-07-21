@@ -30,7 +30,7 @@ public extension Array where Element == [String: Any] {
         } else if let insertInIndex = upperSearchResult.insertInIndex {
             upperIndexR = Swift.max(insertInIndex - 1, 0)
         }
-        guard var lowerIndex = lowerIndexR, var upperIndex = upperIndexR else { return nil }
+        guard var lowerIndex = lowerIndexR, var upperIndex = upperIndexR, lowerIndex <= upperIndex else { return nil }
         guard var limit = limit else { return Array(self[lowerIndex...upperIndex]) }
         limit = limit - 1
         upperIndex = bound == .lower ? Swift.min((lowerIndex + limit), upperIndex) : upperIndex
@@ -69,10 +69,9 @@ public extension Array where Element == [String: Any] {
     
     func binarySearch(withIndex index: Any, key: String, value: Any) -> (obj: Element, index: Int)? {
         guard let searchResult = binarySearchAll(key: key, value: value) else { return nil }
-        let indexDict: [String: Any] = ["index": index]
         for i in searchResult.lowerIndex...searchResult.upperIndex {
             let element = self[i]
-            let comparisonResult = element.compare(to: indexDict, key: "index")
+            let comparisonResult = element.compare(to: index, key: "index")
             if comparisonResult == .equal {
                 return (element, i)
             }
