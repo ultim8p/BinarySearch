@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Dictionary where Key == String, Value == Any {
+public extension Dictionary where Key == String, Value == Any {
     func compare(to val: Any?, key: String) -> Operator? {
         guard let value = self[key], let valueToCompare = val else { return nil }
         if let eqActVal = value as? Int, let eqCmpValue = valueToCompare as? Int {

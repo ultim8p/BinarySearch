@@ -67,18 +67,6 @@ public extension Array where Element == [String: Any] {
         }
     }
     
-    func binarySearch(withIndex index: Any, key: String, value: Any) -> (obj: Element, index: Int)? {
-        guard let searchResult = binarySearchAll(key: key, value: value) else { return nil }
-        for i in searchResult.lowerIndex...searchResult.upperIndex {
-            let element = self[i]
-            let comparisonResult = element.compare(to: index, key: "index")
-            if comparisonResult == .equal {
-                return (element, i)
-            }
-        }
-        return nil
-    }
-
     func binarySearchAll(key: String, value: Any) -> (results: [Element], lowerIndex: Int, upperIndex: Int)? {
         let lowerIndexTuple = binarySearch(withBound: .lower, key: key, value: value)
         let upperIndexTuple = binarySearch(withBound: .upper, key: key, value: value)
