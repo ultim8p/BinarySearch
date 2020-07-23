@@ -56,7 +56,8 @@ public extension Array where Element == [String: Any] {
             return self.searchRange(with: key, value: value, withOp: .lower, limit: nil, skip: nil)
         case .lowerOrequal:
             let searchResults = binarySearch(withBound: .upper, key: key, value: value)
-            guard let endIndex = searchResults.currentIndex ?? ((searchResults.insertInIndex ?? 0) - 1), endIndex >= 0, endIndex < self.count else { return nil }
+            let endIndex = searchResults.currentIndex ?? ((searchResults.insertInIndex ?? 0) - 1)
+            guard endIndex >= 0, endIndex < self.count else { return nil }
             return Array(self[0...endIndex])
         }
     }
