@@ -67,6 +67,13 @@ public extension Array where Element == [String: Any] {
         }
     }
     
+    /// Searches all elemets that have a specific key value pair.
+    /// - Parameters:
+    ///     - key: Key name of parameter.
+    ///     - value: Value of key.
+    /// - Returns: results: List of objects with the key value pair.
+    /// - Returns: lowerIndex: First index of results inside the array.
+    /// - Returns: upperIndex: Last index of results inside the array.
     func binarySearchAll(key: String, value: Any) -> (results: [Element], lowerIndex: Int, upperIndex: Int)? {
         let lowerIndexTuple = binarySearch(withBound: .lower, key: key, value: value)
         let upperIndexTuple = binarySearch(withBound: .upper, key: key, value: value)
@@ -115,5 +122,5 @@ public extension Array where Element == [String: Any] {
         index =  comparisonResult == .greater ? index : index + 1
         return (nil, index)
     }
-
+    
 }
