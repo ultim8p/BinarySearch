@@ -8,7 +8,7 @@
 import Foundation
 
 public struct BinarySearchResult {
-    var results: [[String: Any]]?
-    var lowerIndex: Int?
-    var upperIndex: Int?
+    public var results: [[String: Any]]?
+    public var lowerIndex: Int?
+    public var upperIndex: Int?
 }
