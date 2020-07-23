@@ -99,7 +99,7 @@ public extension Array where Element == [String: Any] {
     func binarySearchAll(key: String, value: Any) -> BinarySearchResult? {
         let lowerIndexTuple = binarySearch(withBound: .lower, key: key, value: value)
         let upperIndexTuple = binarySearch(withBound: .upper, key: key, value: value)
-        if let lowerBound = lowerIndexTuple.currentIndex, let upperBound = upperIndexTuple.currentIndex {
+        if let lowerBound = lowerIndexTuple.currentIndex, let upperBound = upperIndexTuple.currentIndex, lowerBound <= upperBound {
             let results: [Element] = Array(self[lowerBound...upperBound])
             return BinarySearchResult(results: results, lowerIndex: lowerBound, upperIndex: upperBound)
         }
