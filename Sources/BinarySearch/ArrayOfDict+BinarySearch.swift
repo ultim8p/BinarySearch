@@ -74,12 +74,12 @@ public extension Array where Element == [String: Any] {
     /// - Returns: results: List of objects with the key value pair.
     /// - Returns: lowerIndex: First index of results inside the array.
     /// - Returns: upperIndex: Last index of results inside the array.
-    func binarySearchAll(key: String, value: Any) -> (results: [Element], lowerIndex: Int, upperIndex: Int)? {
+    func binarySearchAll(key: String, value: Any) -> BinarySearchResult? {
         let lowerIndexTuple = binarySearch(withBound: .lower, key: key, value: value)
         let upperIndexTuple = binarySearch(withBound: .upper, key: key, value: value)
         if let lowerBound = lowerIndexTuple.currentIndex, let upperBound = upperIndexTuple.currentIndex {
             let results: [Element] = Array(self[lowerBound...upperBound])
-            return (results, lowerBound, upperBound)
+            return BinarySearchResult(results: results, lowerIndex: lowerBound, upperIndex: upperBound)
         }
         return nil
     }
