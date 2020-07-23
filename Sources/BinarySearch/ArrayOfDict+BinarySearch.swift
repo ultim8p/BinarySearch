@@ -38,6 +38,28 @@ public extension Array where Element == [String: Any] {
         return Array(self[lowerIndex...upperIndex])
     }
     
+    func searchRange(with key: String, value: Any, withOp operatr: LowerOperator) -> [Element]? {
+        switch operatr {
+        case .greater:
+            return self.searchRange(with: key, value: value, withOp: .greater, limit: nil, skip: nil)
+        case .greaterOrequal:
+            let searchResults = binarySearch(withBound: .lower, key: key, value: value)
+            let endIndex = self.count - 1
+            guard let startIndex = searchResults.currentIndex ?? searchResults.insertInIndex, startIndex >= 0, startIndex <= endIndex else { return nil }
+            return Array(self[startIndex...endIndex])
+        }
+    }
+    
+    func searchRange(with key: String, value: Any, withOp operatr: UpperOperator) -> [Element]? {
+        switch operatr {
+        case .lower:
+            return self.searchRange(with: key, value: value, withOp: .lower, limit: nil, skip: nil)
+        case .lowerOrequal:
+            let searchResults = binarySearch(withBound: .upper, key: key, value: value)
+            guard let endIndex = searchResults.currentIndex ?? ((searchResults.insertInIndex ?? 0) - 1), endIndex >= 0, endIndex < self.count else { return nil }
+            return Array(self[0...endIndex])
+        }
+    }
     
     func searchRange(with key: String, value: Any, withOp operatr: ExclusiveOperator, limit: Int?, skip: Int? = nil) -> [Element]? {
         if (skip != nil && (skip ?? 1) < 0) || (limit != nil && (limit ?? 1) < 1) {
