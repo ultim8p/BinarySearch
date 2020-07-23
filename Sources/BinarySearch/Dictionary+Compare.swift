@@ -16,9 +16,10 @@ public extension Dictionary where Key == String, Value == Any {
             return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
         } else if let eqActVal = value as? Double, let eqCmpValue = valueToCompare as? Double {
             return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
-        } else if let eqActVal = value as? Date, let eqCmpValue = valueToCompare as? Date {
-            return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
         } else if let eqActVal = value as? Float, let eqCmpValue = valueToCompare as? Float {
+            return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
+        } else if let eqCmpValue = valueToCompare as? Date, let timeIntervalSaved = value as? Double {
+            let eqActVal = Date(timeIntervalSince1970: timeIntervalSaved)
             return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
         } else {
             return nil
