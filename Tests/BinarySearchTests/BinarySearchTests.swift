@@ -5,7 +5,7 @@ final class BinarySearchTests: XCTestCase {
     let testDict: [[String : Any]] = [["id": 1], ["id": 2], ["id": 3], ["id": 3], ["id": 3], ["id": 4], ["id": 4], ["id": 6], ["id": 8], ["id": 8]]
     let missingValuesdict: [[String : Any]] = [["id": 0], ["id": 0], ["id": 1], ["id": 1], ["id": 6], ["id": 9], ["id": 9], ["id": 10], ["id": 10], ["id": 10], ["id": 12]]
     let twoValuesDict: [[String : Any]] = [["id": -10], ["id": -10], ["id": -10], ["id": -10], ["id": 50], ["id": 50], ["id": 50], ["id": 50]]
-
+    let boolDict: [[String: Any]] = [["value": false], ["value": false], ["value": false], ["value": false], ["value": true], ["value": true], ["value": true]]
     
     func testSearchExistingValue(){
         XCTAssertEqual(testDict.binarySearch(key: "id", value: 2).currentIndex, 1)
@@ -120,7 +120,42 @@ final class BinarySearchTests: XCTestCase {
         let binarySearchWithOBound = emptyDict.binarySearch(withBound: .upper, key: "id", value: -4)
         XCTAssertNil(binarySearchWithOBound.currentIndex)
         XCTAssertEqual(binarySearchWithOBound.insertInIndex, 0)
-
+    }
+    
+    func testBoolSearch(){
+        var searchResult = boolDict.searchRange(with: "value", value: true, withOp: .lower)
+        XCTAssertEqual(searchResult?.count, 4)
+        searchResult = boolDict.searchRange(with: "value", value: false, withOp: .lower)
+        XCTAssertNil(searchResult)
+        searchResult = boolDict.searchRange(with: "value", value: false, withOp: .greater)
+        XCTAssertEqual(searchResult?.count, 3)
+        searchResult = boolDict.searchRange(with: "value", value: false, withOp: .greaterOrequal)
+        XCTAssertEqual(searchResult?.count, boolDict.count)
+        searchResult = boolDict.searchRange(with: "value", value: true, withOp: .lowerOrequal)
+        XCTAssertEqual(searchResult?.count, boolDict.count)
+        searchResult = boolDict.searchRange(with: "value", value: true, withOp: .greaterOrequal)
+        XCTAssertEqual(searchResult?.count, 3)
+        searchResult = boolDict.searchRange(with: "value", value: false, withOp: .lowerOrequal)
+        XCTAssertEqual(searchResult?.count, 4)
+        var binarySearchResult = boolDict.binarySearch(key: "value", value: false)
+        XCTAssertNotNil(binarySearchResult.currentIndex)
+        let binarySearchAllResult = boolDict.binarySearchAll(key: "value", value: false)
+        XCTAssertNotNil(binarySearchAllResult)
+        XCTAssertEqual(binarySearchAllResult?.results?.count, 4)
+        binarySearchResult = boolDict.binarySearch(withBound: .upper, key: "value", value: false)
+        XCTAssertEqual(binarySearchResult.currentIndex, 3)
+        binarySearchResult = boolDict.binarySearch(withBound: .lower, key: "value", value: true)
+        XCTAssertEqual(binarySearchResult.currentIndex, 4)
+        binarySearchResult = boolDict.binarySearch(withBound: .lower, key: "value", value: false)
+        XCTAssertEqual(binarySearchResult.currentIndex, 0)
+        binarySearchResult = boolDict.binarySearch(withBound: .upper, key: "value", value: true)
+        XCTAssertEqual(binarySearchResult.currentIndex, 6)
+        let otherValueSearch = boolDict.binarySearch(key: "value", value: 7)
+        XCTAssertNil(otherValueSearch.currentIndex)
+        XCTAssertNil(otherValueSearch.insertInIndex)
+        let otherKeySearch = boolDict.binarySearch(key: "otherValue", value: 7)
+        XCTAssertNil(otherKeySearch.currentIndex)
+        XCTAssertNil(otherKeySearch.insertInIndex)
     }
 
     static var allTests = [

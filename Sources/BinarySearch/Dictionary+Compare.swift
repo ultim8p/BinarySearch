@@ -16,7 +16,9 @@ public extension Dictionary where Key == String, Value == Any {
             return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
         } else if let eqActVal = value as? Double, let eqCmpValue = valueToCompare as? Double {
             return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
-        } else if let eqActVal = value as? Float, let eqCmpValue = valueToCompare as? Float {
+        } else if let eqActVal = value as? Bool, let eqCmpValue = valueToCompare as? Bool {
+            return eqActVal == eqCmpValue ? .equal : (eqActVal == false  ? .lower : .greater)
+        }else if let eqActVal = value as? Float, let eqCmpValue = valueToCompare as? Float {
             return eqActVal == eqCmpValue ? .equal : (eqActVal < eqCmpValue ? .lower : .greater)
         } else if let eqCmpValue = valueToCompare as? Date, let eqActVal = value as? Double {
             let eqCmpValueToDouble = eqCmpValue.timeIntervalSince1970 * 1000
