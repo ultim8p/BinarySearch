@@ -90,6 +90,38 @@ final class BinarySearchTests: XCTestCase {
         searchResult = missingValuesdict.searchRange(with: "id", value: 3, withOp: .greaterOrequal)
         XCTAssertEqual(searchResult?.count, 7)
     }
+    
+    func testWithEmptyArray() {
+        let emptyDict: [[String : Any]] = []
+        var searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .lower)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater, limit: 20)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater, limit: nil)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater, limit: 1, skip: 1)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater, limit: nil, skip: 1)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater, limit: 1, skip: nil)
+        XCTAssertNil(searchResult)
+        searchResult = emptyDict.searchRange(with: "id", value: 4, withOp: .greater, limit: nil, skip: nil)
+        XCTAssertNil(searchResult)
+        let searchAllResult = emptyDict.binarySearchAll(key: "id", value: 3)
+        XCTAssertNil(searchAllResult)
+        let binarySearchResult = emptyDict.binarySearch(key: "id", value: 4)
+        XCTAssertNil(binarySearchResult.currentIndex)
+        XCTAssertEqual(binarySearchResult.insertInIndex, 0)
+        let binarySearchWithBound = emptyDict.binarySearch(withBound: .lower, key: "id", value: -4)
+        XCTAssertNil(binarySearchWithBound.currentIndex)
+        XCTAssertEqual(binarySearchWithBound.insertInIndex, 0)
+        let binarySearchWithOBound = emptyDict.binarySearch(withBound: .upper, key: "id", value: -4)
+        XCTAssertNil(binarySearchWithOBound.currentIndex)
+        XCTAssertEqual(binarySearchWithOBound.insertInIndex, 0)
+
+    }
 
     static var allTests = [
         ("testSearchExistingValue", testSearchExistingValue),
