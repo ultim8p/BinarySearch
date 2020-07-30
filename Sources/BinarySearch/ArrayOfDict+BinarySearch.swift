@@ -11,6 +11,9 @@ public extension Array where Element == [String: Any] {
     
     func searchRange(with key: String, lowerValue: Any, lowerOpt: LowerOperator, upperValue: Any, upperOpt: UpperOperator, limit: Int?, bound: Bound) -> [Element]? {
         let valuesComparison = ["value": lowerValue].compare(to: upperValue, key: "value")
+        if limit != nil && limit! < 1 {
+            return nil
+        }
         guard valuesComparison == .equal || valuesComparison == .lower else { return nil }
         let lowerBound: BinarySearchBound = lowerOpt == .greaterOrequal ? .lower : .upper
         let upperBound: BinarySearchBound = upperOpt == .lowerOrequal ? .upper : .lower
@@ -18,19 +21,22 @@ public extension Array where Element == [String: Any] {
         let upperSearchResult = binarySearch(withBound: upperBound, key: key, value: upperValue)
         var lowerIndexR: Int?
         var upperIndexR: Int?
-
+        let lastIndex = self.count - 1
+        
         if let current = lowerSearchResult.currentIndex {
-            lowerIndexR = lowerOpt == .greaterOrequal ? current : (Swift.min(current + 1,self.count))
+            lowerIndexR = lowerOpt == .greaterOrequal ? current : current + 1
         } else if let insertInIndex = lowerSearchResult.insertInIndex {
             lowerIndexR = insertInIndex
         }
 
         if let current = upperSearchResult.currentIndex {
-            upperIndexR = upperOpt == .lowerOrequal ? current : Swift.max(current - 1, 0)
+            upperIndexR = upperOpt == .lowerOrequal ? current : current - 1
         } else if let insertInIndex = upperSearchResult.insertInIndex {
-            upperIndexR = Swift.max(insertInIndex - 1, 0)
+            upperIndexR = insertInIndex - 1
         }
-        guard var lowerIndex = lowerIndexR, var upperIndex = upperIndexR, lowerIndex <= upperIndex else { return nil }
+        guard var lowerIndex = lowerIndexR, var upperIndex = upperIndexR, lowerIndex <= upperIndex,
+              lowerIndex >= 0, lowerIndex <= lastIndex,
+              upperIndex >= 0, upperIndex <= lastIndex else { return nil }
         guard var limit = limit else { return Array(self[lowerIndex...upperIndex]) }
         limit = limit - 1
         upperIndex = bound == .lower ? Swift.min((lowerIndex + limit), upperIndex) : upperIndex
@@ -63,7 +69,7 @@ public extension Array where Element == [String: Any] {
     }
     
     func searchRange(with key: String, value: Any, withOp operatr: ExclusiveOperator, limit: Int?, skip: Int? = nil) -> [Element]? {
-        if (skip != nil && (skip ?? 1) < 0) || (limit != nil && (limit ?? 1) < 1) {
+        if (skip != nil && skip! < 0) || (limit != nil && limit! < 1) {
             return nil
         }
         let lastIndex = self.count - 1
@@ -108,13 +114,13 @@ public extension Array where Element == [String: Any] {
     }
 
     func binarySearch(withBound bound: BinarySearchBound = .any, key: String, value: Any) -> (currentIndex: Int?, insertInIndex: Int?) {
-        if self.count == 0 {
+        if self.isEmpty {
             return (nil, 0)
         }
         var lowerIndex = 0
         var upperIndex = self.count - 1
         var currentIndex = 0
-        var indexResult = -1
+        var lastIndexWhereValueWasFound = -1
         while (lowerIndex <= upperIndex) {
             currentIndex = (lowerIndex + upperIndex) / 2
             let currentDict = self[currentIndex]
@@ -129,14 +135,15 @@ public extension Array where Element == [String: Any] {
                 case .lower:
                     upperIndex = (comparisonResult == .equal || comparisonResult == .greater) ? currentIndex - 1 : upperIndex
                     lowerIndex = comparisonResult == .lower ? currentIndex + 1 : lowerIndex
-                    indexResult = comparisonResult == .equal ? currentIndex : indexResult
+                    lastIndexWhereValueWasFound = comparisonResult == .equal ? currentIndex : lastIndexWhereValueWasFound
                 case .upper:
                     lowerIndex = (comparisonResult == .lower || comparisonResult == .equal) ? currentIndex + 1 : lowerIndex
                     upperIndex = comparisonResult == .greater ? currentIndex - 1 : upperIndex
-                    indexResult = comparisonResult == .equal ? currentIndex : indexResult
+                    lastIndexWhereValueWasFound = comparisonResult == .equal ? currentIndex : lastIndexWhereValueWasFound
                 }
         }
-        var index = (bound == .any) ? currentIndex : (indexResult != -1 ? indexResult : currentIndex)
+        var index = (bound == .any) ? currentIndex : (lastIndexWhereValueWasFound != -1 ? lastIndexWhereValueWasFound : currentIndex)
+        guard index >= 0 && index < self.count else { return (nil, index) }
         let valueFound = self[index]
         let comparisonResult = valueFound.compare(to: value, key: key)
         if comparisonResult == .equal {
